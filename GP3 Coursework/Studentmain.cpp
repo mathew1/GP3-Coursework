@@ -110,11 +110,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// load game fonts
 	// Load Fonts
-	LPCSTR gameFonts[3] = { "Fonts/digital-7.ttf", "Fonts/space age.ttf", "Fonts/doctor_who.ttf" };
+	LPCSTR gameFonts[3] = { "Fonts/digital-7.ttf", "Fonts/space age.ttf", "Fonts/Star_Jedi_Rounded.ttf" };
 
 	theFontMgr->addFont("SevenSeg", gameFonts[0], 24);
 	theFontMgr->addFont("Space", gameFonts[1], 24);
-	theFontMgr->addFont("DrWho", gameFonts[2], 48);
+	theFontMgr->addFont("StarWars", gameFonts[2], 48);
 
 	// load game sounds
 	// Load Sound
@@ -217,8 +217,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		
 		glPushMatrix();
 		theOGLWnd.setOrtho2D(windowWidth, windowHeight);
-		theFontMgr->getFont("DrWho")->printText("Tardis Wars", FTPoint(10, 35, 0.0f), colour3f(0.0f,255.0f,0.0f));
-		theFontMgr->getFont("DrWho")->printText(outputMsg.c_str(), FTPoint(850, 35, 0.0f), colour3f(255.0f, 255.0f, 0.0f)); // uses c_str to convert string to LPCSTR
+		theFontMgr->getFont("StarWars")->printText("Death Star", FTPoint(10, 35, 0.0f), colour3f(0.0f,255.0f,0.0f));
+		theFontMgr->getFont("StarWars")->printText(outputMsg.c_str(), FTPoint(850, 35, 0.0f), colour3f(255.0f, 255.0f, 0.0f)); // uses c_str to convert string to LPCSTR
 		glPopMatrix();
 
 		pgmWNDMgr->swapBuffers();
