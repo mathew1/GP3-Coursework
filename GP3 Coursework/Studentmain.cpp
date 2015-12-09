@@ -81,16 +81,16 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// Create Texture map
 	cTexture tardisTexture;
-	tardisTexture.createTexture("Models/tardis.png");
+	tardisTexture.createTexture("Models/DeathStar.png");
 	cTexture spaceShipTexture;
-	spaceShipTexture.createTexture("Models/SpaceShip/sh3.jpg");
+	spaceShipTexture.createTexture("Models/SpaceShip/mat_plan4.png");
 	cTexture laserTexture;
 	laserTexture.createTexture("Models/laser.tga");
 	cTexture starTexture;
 	starTexture.createTexture("Images/star.png");
 
 	// the starfield
-	cStarfield theStarField(starTexture.getTexture(), glm::vec3(50.0f, 50.0f, 50.0f));
+	//cStarfield theStarField(starTexture.getTexture(), glm::vec3(50.0f, 50.0f, 50.0f));
 
 	// Create Materials for lights
 	cMaterial sunMaterial(lightColour4(0.0f, 0.0f, 0.0f, 1.0f), lightColour4(1.0f, 1.0f, 1.0f, 1.0f), lightColour4(1.0f, 1.0f, 1.0f, 1.0f), lightColour4(0, 0, 0, 1.0f), 5.0f);
@@ -128,35 +128,41 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	cCamera theCamera;
 	theCamera.setTheCameraPos(glm::vec3(0.0f, 0.0f, 75.0f));
 	theCamera.setTheCameraLookAt(glm::vec3(0.0f, 0.0f, 0.0f));
-	theCamera.setTheCameraUpVector(glm::vec3(0.0f, 1.0f, 0.0f)); // pointing upwards in world space
+	theCamera.setTheCameraUpVector(glm::vec3(0.0f, 1.0f, 1.0f)); // pointing upwards in world space
 	theCamera.setTheCameraAspectRatio(windowWidth, windowHeight);
 	theCamera.setTheProjectionMatrix(45.0f, theCamera.getTheCameraAspectRatio(), 0.1f, 300.0f);
 	theCamera.update();
 
 	//Clear key buffers
 	theInputMgr->clearBuffers(theInputMgr->KEYS_DOWN_BUFFER | theInputMgr->KEYS_PRESSED_BUFFER);
+	
+	//cSphere theDeathStar(1, 20, 20);
+	//theDeathStar.initialise(tardisTexture.getTexture(), glm::vec3(0, 0, 40), glm::vec3(0, 0, 0));
+
+	//cSphere theRebels(3, 30, 30);
+	//theRebels.initialise(spaceShipTexture.getTexture, glm::vec3(10, 0, 20), glm::vec3(0, 0, 0));
 
 	// Model
 	cModelLoader tardisMdl;
-	tardisMdl.loadModel("Models/tardis1314.obj", tardisTexture); // Player
+	tardisMdl.loadModel("Models/DeathStar.obj", tardisTexture); // Player
 
 	cModelLoader spaceShipMdl;
-	spaceShipMdl.loadModel("Models/SpaceShip/Sample_Ship.obj", spaceShipTexture); // Enemy
+	spaceShipMdl.loadModel("Models/SpaceShip/planet4.obj", spaceShipTexture); // Enemy
 	
 	cModelLoader theLaser;
 	theLaser.loadModel("Models/laser.obj", laserTexture);
 
-	for (int loop = 0; loop < 5; loop++)
+	for (int loop = 0; loop < 10; loop++)
 	{
 		theEnemy.push_back(new cEnemy);
 		theEnemy[loop]->randomise();
 		theEnemy[loop]->setMdlDimensions(spaceShipMdl.getModelDimensions());
-		theEnemy[loop]->setScale(glm::vec3(5, 5, 5));
+		theEnemy[loop]->setScale(glm::vec3(0.2f, 0.2f, 0.2f));
 	}
 
 
 	cPlayer thePlayer;
-	thePlayer.initialise(glm::vec3(0, 0, 0), 0.0f, glm::vec3(1, 1, 1), glm::vec3(0, 0, 0), 5.0f, true);
+	thePlayer.initialise(glm::vec3(0, 0, 0), 0.0f, glm::vec3(0.1, 0.1, 0.1), glm::vec3(0, 0, 0), 5.0f, true);
 	thePlayer.setMdlDimensions(tardisMdl.getModelDimensions());
 	thePlayer.attachInputMgr(theInputMgr);
 	thePlayer.attachSoundMgr(theSoundMgr);
@@ -185,7 +191,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		glLoadIdentity();
 		glLoadMatrixf((GLfloat*)&theCamera.getTheViewMatrix());
 
-		theStarField.render(0.0f);
+		//theStarField.render(0.0f);
 		sunMaterial.useMaterial();
 		sunLight.lightOn();
 		lfLight.lightOn();
