@@ -81,16 +81,16 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// Create Texture map
 	cTexture tardisTexture;
-	tardisTexture.createTexture("Models/DeathStar.png");
+	tardisTexture.createTexture("Models/Tardis.png");
 	cTexture spaceShipTexture;
 	spaceShipTexture.createTexture("Models/SpaceShip/mat_plan4.png");
 	cTexture laserTexture;
-	laserTexture.createTexture("Models/laser.tga");
+	laserTexture.createTexture("Models/Laser.png");
 	cTexture starTexture;
 	starTexture.createTexture("Images/star.png");
 
 	// the starfield
-	//cStarfield theStarField(starTexture.getTexture(), glm::vec3(50.0f, 50.0f, 50.0f));
+	cStarfield theStarField(starTexture.getTexture(), glm::vec3(50.0f, 50.0f, 50.0f));
 
 	// Create Materials for lights
 	cMaterial sunMaterial(lightColour4(0.0f, 0.0f, 0.0f, 1.0f), lightColour4(1.0f, 1.0f, 1.0f, 1.0f), lightColour4(1.0f, 1.0f, 1.0f, 1.0f), lightColour4(0, 0, 0, 1.0f), 5.0f);
@@ -118,7 +118,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// load game sounds
 	// Load Sound
-	LPCSTR gameSounds[3] = { "Audio/who10Edit.wav", "Audio/shot007.wav", "Audio/explosion2.wav" };
+	LPCSTR gameSounds[3] = { "Audio/imperial.wav", "Audio/blaster.wav", "Audio/explosion2.wav" };
 
 	theSoundMgr->add("Theme", gameSounds[0]);
 	theSoundMgr->add("Shot", gameSounds[1]);
@@ -126,13 +126,23 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// Create a camera
 	cCamera theCamera;
-	theCamera.setTheCameraPos(glm::vec3(0.0f, 0.0f, 75.0f));
+	theCamera.setTheCameraPos(glm::vec3(0.0f, 50.0f, 50.0f));
 	theCamera.setTheCameraLookAt(glm::vec3(0.0f, 0.0f, 0.0f));
-	theCamera.setTheCameraUpVector(glm::vec3(0.0f, 1.0f, 1.0f)); // pointing upwards in world space
+	theCamera.setTheCameraUpVector(glm::vec3(0.0f, 1.0f, 0.0f)); // pointing upwards in world space
 	theCamera.setTheCameraAspectRatio(windowWidth, windowHeight);
 	theCamera.setTheProjectionMatrix(45.0f, theCamera.getTheCameraAspectRatio(), 0.1f, 300.0f);
 	theCamera.update();
 
+	GLfloat cameraRotRadius = 80.0f;
+	GLfloat cameraRotationAngle = 0.0f;
+
+	cCamera theCamera2;
+	theCamera2.setTheCameraPos(glm::vec3(0.0f, 0.0f, 75.0f));
+	theCamera2.setTheCameraLookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+	theCamera2.setTheCameraUpVector(glm::vec3(0.0f, 1.0f, 0.0f)); // pointing upwards in world space
+	theCamera2.setTheCameraAspectRatio(windowWidth, windowHeight);
+	theCamera2.setTheProjectionMatrix(45.0f, theCamera2.getTheCameraAspectRatio(), 0.1f, 300.0f);
+	theCamera2.update();
 	//Clear key buffers
 	theInputMgr->clearBuffers(theInputMgr->KEYS_DOWN_BUFFER | theInputMgr->KEYS_PRESSED_BUFFER);
 	
@@ -144,7 +154,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// Model
 	cModelLoader tardisMdl;
-	tardisMdl.loadModel("Models/DeathStar.obj", tardisTexture); // Player
+	tardisMdl.loadModel("Models/Tardis.obj", tardisTexture); // Player
 
 	cModelLoader spaceShipMdl;
 	spaceShipMdl.loadModel("Models/SpaceShip/planet4.obj", spaceShipTexture); // Enemy
@@ -157,7 +167,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		theEnemy.push_back(new cEnemy);
 		theEnemy[loop]->randomise();
 		theEnemy[loop]->setMdlDimensions(spaceShipMdl.getModelDimensions());
-		theEnemy[loop]->setScale(glm::vec3(0.2f, 0.2f, 0.2f));
+		theEnemy[loop]->setScale(glm::vec3(0.1f, 0.1f, 0.1f));
 	}
 
 
@@ -191,7 +201,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		glLoadIdentity();
 		glLoadMatrixf((GLfloat*)&theCamera.getTheViewMatrix());
 
-		//theStarField.render(0.0f);
+		theStarField.render(0.0f);
 		sunMaterial.useMaterial();
 		sunLight.lightOn();
 		lfLight.lightOn();
@@ -220,20 +230,30 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		}
 
 		outputMsg = to_string(theEnemy.size()); // convert float to string
+
+		
 		
 		glPushMatrix();
 		theOGLWnd.setOrtho2D(windowWidth, windowHeight);
-		theFontMgr->getFont("StarWars")->printText("Death Star", FTPoint(10, 35, 0.0f), colour3f(0.0f,255.0f,0.0f));
+		theFontMgr->getFont("StarWars")->printText("Death Star", FTPoint(10, 35, 0.0f), colour3f(255.0f,255.0f,0.0f));
 		theFontMgr->getFont("StarWars")->printText(outputMsg.c_str(), FTPoint(850, 35, 0.0f), colour3f(255.0f, 255.0f, 0.0f)); // uses c_str to convert string to LPCSTR
 		glPopMatrix();
 
 		pgmWNDMgr->swapBuffers();
 
 		tCount += elapsedTime;
-
+		
 		//Clear key buffers
 		theInputMgr->clearBuffers(theInputMgr->KEYS_DOWN_BUFFER | theInputMgr->KEYS_PRESSED_BUFFER);
 
+		//glm::vec3 currentCameraPos = theCamera.getTheCameraPos();
+		//GLfloat posX = (glm::sin(glm::radians(cameraRotationAngle)) * cameraRotRadius); // *elapsedTime;
+		//GLfloat posZ = (glm::cos(glm::radians(cameraRotationAngle)) * cameraRotRadius); // *elapsedTime;
+		//theCamera.setTheCameraPos(glm::vec3(posX, 0.0f, posZ));
+		//theCamera.update();
+
+		//cameraRotationAngle -= (5.0f * elapsedTime);
+		
 	}
 
 	theOGLWnd.shutdown(); //Free any resources

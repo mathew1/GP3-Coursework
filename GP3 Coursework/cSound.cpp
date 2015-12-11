@@ -17,6 +17,10 @@ cSound::cSound()
 
 }
 
+void cSound::attachInputMgr(cInputMgr* inputMgr)
+{
+	m_InputMgr = inputMgr;
+}
 cSound::~cSound()
 {
 
@@ -60,16 +64,20 @@ void cSound::LoadWAVInfo(ifstream &filename, string &name, 	unsigned int &size)
 
 void cSound::playAudio(ALboolean sndLoop)
 {
-	alSourcei(m_OALSource, sndLoop, AL_TRUE);
+	
+		alSourcei(m_OALSource, sndLoop, AL_TRUE);
 
-	//play
-	alSourcePlay(m_OALSource);
+		//play
+		alSourcePlay(m_OALSource);
+	
 }
 
 void cSound::stopAudio()
 {
 	//to stop
-	alSourceStop(m_OALSource);
+	
+		alSourceStop(m_OALSource);
+	
 }
 
 void cSound::cleanUp()

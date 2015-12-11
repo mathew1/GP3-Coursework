@@ -9,7 +9,7 @@ cCamera.h
 
 // OpenGL Headers
 #include "GameConstants.h"
-
+#include "cInputMgr.h"
 using namespace std;
 
 class cCamera
@@ -32,13 +32,15 @@ private:
 
 
 	glm::vec4 m_viewPort;
-
+	
+	cInputMgr* m_InputMgr;  //Attach the Input Manager
 
 public:
 
 	cCamera();
 	cCamera(int screenWidth, int screenHeight);
-	~cCamera();
+	void attachInputMgr(cInputMgr* inputMgr);
+	
 
 	void setTheViewPort(int x, int y, int width, int height);
 	const glm::vec4 getTheViewPort();
@@ -67,7 +69,8 @@ public:
 	void setTheProjectionMatrix(float fov, float aspectRatio, float nearCP, float farCP);
 	glm::mat4 getTheProjectionMatrix();
 	glm::mat4 getTheViewMatrix();
-
+	
 	void update();
+	~cCamera();
 };
 #endif

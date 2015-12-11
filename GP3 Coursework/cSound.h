@@ -12,6 +12,7 @@ cSound.h
 #include <string>
 #include <iostream>
 #include <fstream>
+#include "cInputMgr.h"
 
 using namespace std;
 
@@ -43,9 +44,10 @@ private:
 	};
 
 	void LoadWAVInfo(ifstream &filename, string &name, unsigned int &size);
-
+	cInputMgr* m_InputMgr;
 public:
 	cSound();
+	void attachInputMgr(cInputMgr* inputMgr);
 	~cSound();
 
 	void loadWAVFile(LPCSTR filename);

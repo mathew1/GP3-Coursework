@@ -15,6 +15,7 @@ cCamera::cCamera()
 }
 
 
+
 cCamera::cCamera(int screenWidth, int screenHeight)
 {
 	m_viewPort = glm::vec4(0, 0, screenWidth, screenHeight);
@@ -23,10 +24,13 @@ cCamera::cCamera(int screenWidth, int screenHeight)
 	m_camViewMatrix = glm::mat4(1.0);
 }
 
-cCamera::~cCamera()
-{
-	
-}
+ //cCamera::attachInputMgr(cInputMgr* inputMgr)
+//{
+	//m_InputMgr = inputMgr;
+//}
+
+
+
 
 void cCamera::setTheViewPort(int x, int y, int width, int height)
 {
@@ -131,4 +135,9 @@ void cCamera::update()
 	setTheCameraUpVector(glm::cross(m_cameraDirection, m_cameraStrafe));
 	setTheProjectionMatrix(45.0f, getTheCameraAspectRatio(), 0.1f, 300.0f);
 	setCamViewMatrix();
+}
+
+cCamera::~cCamera()
+{
+
 }
