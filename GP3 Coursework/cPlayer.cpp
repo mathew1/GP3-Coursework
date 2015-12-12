@@ -42,7 +42,7 @@ void cPlayer::update(float elapsedTime)
 		int numLasers = theTardisLasers.size() - 1;
 		theTardisLasers[numLasers]->setDirection(mdlLaserDirection);
 		theTardisLasers[numLasers]->setRotation(0.0f);
-		theTardisLasers[numLasers]->setScale(glm::vec3(1, 1, 1));
+		theTardisLasers[numLasers]->setScale(glm::vec3(2, 2, 2));
 		theTardisLasers[numLasers]->setSpeed(5.0f);
 		theTardisLasers[numLasers]->setPosition(this->getPosition() + mdlLaserDirection);
 		theTardisLasers[numLasers]->setIsActive(true);

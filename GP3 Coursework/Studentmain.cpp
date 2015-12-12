@@ -126,7 +126,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// Create a camera
 	cCamera theCamera;
-	theCamera.setTheCameraPos(glm::vec3(0.0f, 50.0f, 50.0f));
+	theCamera.setTheCameraPos(glm::vec3(0.0f, 75.0f, 50.0f));
 	theCamera.setTheCameraLookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 	theCamera.setTheCameraUpVector(glm::vec3(0.0f, 1.0f, 0.0f)); // pointing upwards in world space
 	theCamera.setTheCameraAspectRatio(windowWidth, windowHeight);
@@ -141,7 +141,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	theCamera2.setTheCameraLookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 	theCamera2.setTheCameraUpVector(glm::vec3(0.0f, 1.0f, 0.0f)); // pointing upwards in world space
 	theCamera2.setTheCameraAspectRatio(windowWidth, windowHeight);
-	theCamera2.setTheProjectionMatrix(45.0f, theCamera2.getTheCameraAspectRatio(), 0.1f, 300.0f);
+	theCamera2.setTheProjectionMatrix(45.0f, theCamera2.getTheCameraAspectRatio(), 0.1f, 600.0f);
 	theCamera2.update();
 	//Clear key buffers
 	theInputMgr->clearBuffers(theInputMgr->KEYS_DOWN_BUFFER | theInputMgr->KEYS_PRESSED_BUFFER);
@@ -162,7 +162,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	cModelLoader theLaser;
 	theLaser.loadModel("Models/laser.obj", laserTexture);
 
-	for (int loop = 0; loop < 10; loop++)
+	for (int loop = 0; loop < 15; loop++)
 	{
 		theEnemy.push_back(new cEnemy);
 		theEnemy[loop]->randomise();
@@ -172,7 +172,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 
 	cPlayer thePlayer;
-	thePlayer.initialise(glm::vec3(0, 0, 0), 0.0f, glm::vec3(0.1, 0.1, 0.1), glm::vec3(0, 0, 0), 5.0f, true);
+	thePlayer.initialise(glm::vec3(0, 0, 0), 0.0f, glm::vec3(1.0, 1.0, 1.0), glm::vec3(0, 0, 0), 5.0f, true);
 	thePlayer.setMdlDimensions(tardisMdl.getModelDimensions());
 	thePlayer.attachInputMgr(theInputMgr);
 	thePlayer.attachSoundMgr(theSoundMgr);
@@ -185,21 +185,45 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	std::vector<cLaser*> laserList;
 	std::vector<cLaser*>::iterator index;
 
+
+
    //This is the mainloop, we render frames until isRunning returns false
 	while (pgmWNDMgr->isWNDRunning())
-    {
+	{
 		pgmWNDMgr->processWNDEvents(); //Process any window events
 
-        //We get the time that passed since the last frame
+		//We get the time that passed since the last frame
 		float elapsedTime = pgmWNDMgr->getElapsedSeconds();
-		
+
 		// Lab code goes here
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		theOGLWnd.initOGL(windowWidth,windowHeight);
+		theOGLWnd.initOGL(windowWidth, windowHeight);
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		glLoadMatrixf((GLfloat*)&theCamera.getTheViewMatrix());
+		
+		if (GetAsyncKeyState(0x43))
+		{
+			glLoadMatrixf((GLfloat*)&theCamera2.getTheViewMatrix());
+
+		}
+		else
+		{
+			glLoadMatrixf((GLfloat*)&theCamera.getTheViewMatrix());
+		}
+
+		if (theInputMgr->isKeyDown(0x53))
+		{
+			theSoundMgr->getSnd("Theme")->stopAudio();
+		
+		}
+
+		else
+
+			if (theInputMgr->isKeyDown(0x41))
+			{
+			theSoundMgr->getSnd("Theme")->playAudio(AL_LOOPING);
+			}
 
 		theStarField.render(0.0f);
 		sunMaterial.useMaterial();
@@ -243,8 +267,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		tCount += elapsedTime;
 		
+		
 		//Clear key buffers
 		theInputMgr->clearBuffers(theInputMgr->KEYS_DOWN_BUFFER | theInputMgr->KEYS_PRESSED_BUFFER);
+
+		
+
+
 
 		//glm::vec3 currentCameraPos = theCamera.getTheCameraPos();
 		//GLfloat posX = (glm::sin(glm::radians(cameraRotationAngle)) * cameraRotRadius); // *elapsedTime;
