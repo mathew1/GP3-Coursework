@@ -61,7 +61,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	// Attach the keyboard manager
 	pgmWNDMgr->attachInputMgr(theInputMgr);
 
-
+	cSphere theSun(4, 40, 40);
+	cSphere theDeathStarMoon(1, 20, 20);
     //Attempt to create the window
 	if (!pgmWNDMgr->createWND(windowWidth, windowHeight, windowBPP))
     {
@@ -81,20 +82,27 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// Create Texture map
 	cTexture tardisTexture;
-	tardisTexture.createTexture("Models/Tardis.png");
+	tardisTexture.createTexture("Models/DeathStar.png");
 	cTexture spaceShipTexture;
 	spaceShipTexture.createTexture("Models/SpaceShip/mat_plan4.png");
 	cTexture laserTexture;
 	laserTexture.createTexture("Models/Laser.png");
 	cTexture starTexture;
 	starTexture.createTexture("Images/star.png");
+	cTexture moonTexture;
+	moonTexture.createTexture("Images/moon.png");
+	cTexture sunTexture;
+	sunTexture.createTexture("Images/sun.png");
 
 	// the starfield
 	cStarfield theStarField(starTexture.getTexture(), glm::vec3(50.0f, 50.0f, 50.0f));
 
+	theDeathStarMoon.initialise(moonTexture.getTexture(), glm::vec3(-5, 10, 20), glm::vec3(0, 0, 0));
+	theSun.initialise(sunTexture.getTexture(), glm::vec3(10, 10, 20), glm::vec3(0, 0, 0));
+	
 	// Create Materials for lights
 	cMaterial sunMaterial(lightColour4(0.0f, 0.0f, 0.0f, 1.0f), lightColour4(1.0f, 1.0f, 1.0f, 1.0f), lightColour4(1.0f, 1.0f, 1.0f, 1.0f), lightColour4(0, 0, 0, 1.0f), 5.0f);
-
+	cMaterial moonMaterial(lightColour4(0.1f, 0.1f, 0.1f, 1.0f), lightColour4(1.0f, 1.0f, 1.0f, 1.0f), lightColour4(0.2f, 0.2f, 0.2f, 1.0f), lightColour4(0, 0, 0, 1.0f), 10.0f);
 	// Create Light
 	cLight sunLight(GL_LIGHT0, lightColour4(0, 0, 0, 1), lightColour4(1, 1, 1, 1), lightColour4(1, 1, 1, 1), glm::vec4(0, 0, 20, 1),
 		glm::vec3(0.0, 0.0, 1.0), 0.0f, 180.0f, 1.0f, 0.0f, 0.0f);
@@ -146,15 +154,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	//Clear key buffers
 	theInputMgr->clearBuffers(theInputMgr->KEYS_DOWN_BUFFER | theInputMgr->KEYS_PRESSED_BUFFER);
 	
-	//cSphere theDeathStar(1, 20, 20);
-	//theDeathStar.initialise(tardisTexture.getTexture(), glm::vec3(0, 0, 40), glm::vec3(0, 0, 0));
-
-	//cSphere theRebels(3, 30, 30);
-	//theRebels.initialise(spaceShipTexture.getTexture, glm::vec3(10, 0, 20), glm::vec3(0, 0, 0));
 
 	// Model
 	cModelLoader tardisMdl;
-	tardisMdl.loadModel("Models/Tardis.obj", tardisTexture); // Player
+	tardisMdl.loadModel("Models/DeathStar.obj", tardisTexture); // Player
 
 	cModelLoader spaceShipMdl;
 	spaceShipMdl.loadModel("Models/SpaceShip/planet4.obj", spaceShipTexture); // Enemy
@@ -162,17 +165,17 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	cModelLoader theLaser;
 	theLaser.loadModel("Models/laser.obj", laserTexture);
 
-	for (int loop = 0; loop < 15; loop++)
+	for (int loop = 0; loop < 20; loop++)
 	{
 		theEnemy.push_back(new cEnemy);
 		theEnemy[loop]->randomise();
 		theEnemy[loop]->setMdlDimensions(spaceShipMdl.getModelDimensions());
-		theEnemy[loop]->setScale(glm::vec3(0.1f, 0.1f, 0.1f));
+		theEnemy[loop]->setScale(glm::vec3(0.05f, 0.05f, 0.05f));
 	}
 
 
 	cPlayer thePlayer;
-	thePlayer.initialise(glm::vec3(0, 0, 0), 0.0f, glm::vec3(1.0, 1.0, 1.0), glm::vec3(0, 0, 0), 5.0f, true);
+	thePlayer.initialise(glm::vec3(0, 0, 0), 0.0f, glm::vec3(0.05f, 0.05f, 0.05f), glm::vec3(0, 0, 0), 5.0f, true);
 	thePlayer.setMdlDimensions(tardisMdl.getModelDimensions());
 	thePlayer.attachInputMgr(theInputMgr);
 	thePlayer.attachSoundMgr(theSoundMgr);
@@ -226,11 +229,19 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			}
 
 		theStarField.render(0.0f);
+
+		theSun.prepare(0.0f);
 		sunMaterial.useMaterial();
 		sunLight.lightOn();
+		theSun.render(theSun.getRotAngle());
+		
 		lfLight.lightOn();
 		rfLight.lightOn();
 		cbLight.lightOn();
+
+		theDeathStarMoon.prepare(0.0f);
+		moonMaterial.useMaterial();
+		theDeathStarMoon.render(theDeathStarMoon.getRotAngle());
 
 		for (vector<cEnemy*>::iterator enemyIterator = theEnemy.begin(); enemyIterator != theEnemy.end(); ++enemyIterator)
 		{
@@ -271,17 +282,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		//Clear key buffers
 		theInputMgr->clearBuffers(theInputMgr->KEYS_DOWN_BUFFER | theInputMgr->KEYS_PRESSED_BUFFER);
 
-		
-
-
-
-		//glm::vec3 currentCameraPos = theCamera.getTheCameraPos();
-		//GLfloat posX = (glm::sin(glm::radians(cameraRotationAngle)) * cameraRotRadius); // *elapsedTime;
-		//GLfloat posZ = (glm::cos(glm::radians(cameraRotationAngle)) * cameraRotRadius); // *elapsedTime;
-		//theCamera.setTheCameraPos(glm::vec3(posX, 0.0f, posZ));
-		//theCamera.update();
-
-		//cameraRotationAngle -= (5.0f * elapsedTime);
+	
 		
 	}
 
