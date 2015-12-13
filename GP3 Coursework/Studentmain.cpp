@@ -60,7 +60,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// Attach the keyboard manager
 	pgmWNDMgr->attachInputMgr(theInputMgr);
-
+	
+    // This is our Sun and Moon Variabkes with there respectable sizes.
 	cSphere theSun(4, 40, 40);
 	cSphere theDeathStarMoon(1, 20, 20);
     //Attempt to create the window
@@ -80,7 +81,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
         return 1;
     }
 
-	// Create Texture map
+	// Create Texture map For deathstar, Enemys, Lasers, Moon and Sun
 	cTexture tardisTexture;
 	tardisTexture.createTexture("Models/DeathStar.png");
 	cTexture spaceShipTexture;
@@ -96,7 +97,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// the starfield
 	cStarfield theStarField(starTexture.getTexture(), glm::vec3(50.0f, 50.0f, 50.0f));
-
+	
+    // Initializing our Sun and Moon and getting their textures and Positions in the Game world.
 	theDeathStarMoon.initialise(moonTexture.getTexture(), glm::vec3(-5, 10, 20), glm::vec3(0, 0, 0));
 	theSun.initialise(sunTexture.getTexture(), glm::vec3(10, 10, 20), glm::vec3(0, 0, 0));
 	
@@ -143,7 +145,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	GLfloat cameraRotRadius = 80.0f;
 	GLfloat cameraRotationAngle = 0.0f;
-
+	// Second Camera With different position created.
 	cCamera theCamera2;
 	theCamera2.setTheCameraPos(glm::vec3(0.0f, 0.0f, 75.0f));
 	theCamera2.setTheCameraLookAt(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -155,7 +157,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	theInputMgr->clearBuffers(theInputMgr->KEYS_DOWN_BUFFER | theInputMgr->KEYS_PRESSED_BUFFER);
 	
 
-	// Model
+	// Player Model, Enemy Model and Laser Model
 	cModelLoader tardisMdl;
 	tardisMdl.loadModel("Models/DeathStar.obj", tardisTexture); // Player
 
@@ -164,7 +166,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	
 	cModelLoader theLaser;
 	theLaser.loadModel("Models/laser.obj", laserTexture);
-
+	// Enemys are randomly spawned into the world with a specific scale.
 	for (int loop = 0; loop < 20; loop++)
 	{
 		theEnemy.push_back(new cEnemy);
@@ -173,7 +175,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		theEnemy[loop]->setScale(glm::vec3(0.05f, 0.05f, 0.05f));
 	}
 
-
+	// The player is created and initialised with a specific scale and has the inpur and sound manager attached to it.
 	cPlayer thePlayer;
 	thePlayer.initialise(glm::vec3(0, 0, 0), 0.0f, glm::vec3(0.05f, 0.05f, 0.05f), glm::vec3(0, 0, 0), 5.0f, true);
 	thePlayer.setMdlDimensions(tardisMdl.getModelDimensions());
@@ -182,7 +184,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	float tCount = 0.0f;
 	string outputMsg;
-
+	//Loops theme sound so it is constantly playing
 	theSoundMgr->getSnd("Theme")->playAudio(AL_LOOPING);
 
 	std::vector<cLaser*> laserList;
@@ -204,7 +206,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		
+		// If statements for changing the camera by holding down the C button.
 		if (GetAsyncKeyState(0x43))
 		{
 			glLoadMatrixf((GLfloat*)&theCamera2.getTheViewMatrix());
@@ -214,7 +216,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		{
 			glLoadMatrixf((GLfloat*)&theCamera.getTheViewMatrix());
 		}
-
+		// If statements for turning the sound on and off by pressing S to turn off theme song and press A to turn it back on.
 		if (theInputMgr->isKeyDown(0x53))
 		{
 			theSoundMgr->getSnd("Theme")->stopAudio();
@@ -229,7 +231,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			}
 
 		theStarField.render(0.0f);
-
+		// Rendering the Sun with Light attahced
 		theSun.prepare(0.0f);
 		sunMaterial.useMaterial();
 		sunLight.lightOn();
@@ -238,11 +240,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		lfLight.lightOn();
 		rfLight.lightOn();
 		cbLight.lightOn();
-
+		// Rendering the moon 
 		theDeathStarMoon.prepare(0.0f);
 		moonMaterial.useMaterial();
 		theDeathStarMoon.render(theDeathStarMoon.getRotAngle());
-
+		// Begining Enemy Iteration
 		for (vector<cEnemy*>::iterator enemyIterator = theEnemy.begin(); enemyIterator != theEnemy.end(); ++enemyIterator)
 		{
 			if ((*enemyIterator)->isActive())
@@ -251,10 +253,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				(*enemyIterator)->update(elapsedTime);
 			}
 		}
-
+		// Rendering Player
 		tardisMdl.renderMdl(thePlayer.getPosition(), thePlayer.getRotation(), thePlayer.getScale());
 		thePlayer.update(elapsedTime);
-		
+		//Beginning Laser Iteration
 		for (vector<cLaser*>::iterator laserIterartor = theTardisLasers.begin(); laserIterartor != theTardisLasers.end(); ++laserIterartor)
 		{
 			if ((*laserIterartor)->isActive())
@@ -267,7 +269,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		outputMsg = to_string(theEnemy.size()); // convert float to string
 
 		
-		
+		//Rendering Font into top left and right hand corners of the screen
 		glPushMatrix();
 		theOGLWnd.setOrtho2D(windowWidth, windowHeight);
 		theFontMgr->getFont("StarWars")->printText("Death Star", FTPoint(10, 35, 0.0f), colour3f(255.0f,255.0f,0.0f));
